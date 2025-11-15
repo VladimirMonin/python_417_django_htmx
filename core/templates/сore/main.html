@@ -1,0 +1,23 @@
+<!-- core/templates/core/main.html -->
+{% extends 'core/base.html' %}
+
+{% block title %}Лента | TikToeken{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h1 class="mb-4 text-center">Лента</h1>
+
+        <!-- Контейнер для всех карточек -->
+        <div id="posts-container">
+            {% for post in posts %}
+                {% include 'core/_card.html' %}
+            {% endfor %}
+        </div>
+        
+        <!-- Сюда HTMX будет подгружать новые посты -->
+        <div id="load-more-trigger"></div>
+
+    </div>
+</div>
+{% endblock content %}
