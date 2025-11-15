@@ -8,11 +8,20 @@
     <div class="col-md-8 col-lg-6">
         <h1 class="mb-4 text-center">Лента</h1>
 
+        <!-- Кнопка для обновления ленты -->
+        <div class="text-center mb-4">
+            <button 
+                class="btn btn-outline-dark"
+                hx-get="{% url 'core:post_list' %}"
+                hx-target="#posts-container"
+                hx-swap="innerHTML">
+                <i class="bi bi-arrow-clockwise"></i> Загрузить посты заново
+            </button>
+        </div>
+
         <!-- Контейнер для всех карточек -->
         <div id="posts-container">
-            {% for post in posts %}
-                {% include 'core/_card.html' %}
-            {% endfor %}
+            {% include 'core/_posts_list.html' %}
         </div>
         
         <!-- Сюда HTMX будет подгружать новые посты -->

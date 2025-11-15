@@ -7,4 +7,5 @@ app_name = "core"
 urlpatterns = [
     # Маршрут для главной страницы
     path("", views.main_feed_view, name="main_feed"),
+    path('posts/', views.post_list_view, name='post_list'),
 ]

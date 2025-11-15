@@ -34,3 +34,12 @@ def main_feed_view(request):
         "posts": MOCK_POSTS,
     }
     return render(request, "core/main.html", context)
+
+
+def post_list_view(request):
+    """
+    Возвращает только HTML-фрагмент со списком постов.
+    """
+    context = {"posts": MOCK_POSTS}
+    # Обратите внимание: рендерим не 'main.html', а только 'партиал'
+    return render(request, "core/_posts_list.html", context)

@@ -1,0 +1,4 @@
+<!-- core/templates/core/_posts_list.html -->
+{% for post in posts %}
+    {% include 'core/_card.html' with post=post %}
+{% endfor %}
