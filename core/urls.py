@@ -9,5 +9,6 @@ urlpatterns = [
     path("", views.main_feed_view, name="main_feed"),
     path('posts/', views.htmx_post_list_view, name='post_list'),
     path('create-post/', views.htmx_create_post_view, name='create_post'),
+    path('delete-post/<int:post_id>/', views.htmx_delete_post_view, name='delete_post'),
 
 ]

@@ -21,4 +21,16 @@
             <i class="bi bi-hand-thumbs-down me-2"></i>Пропустить
         </button>
     </div>
+    {% comment %} Админ-панель - для персонала сайта {% endcomment %}
+    {% if user.is_staff %}
+    <div class="admin-actions">
+        <button class="btn btn-sm btn-outline-danger"
+                hx-delete="{% url 'core:delete_post' post.id %}"
+                hx-target="#post-card-{{ post.id }}"
+                hx-swap="outerHTML"
+                hx-confirm="Вы уверены, что хотите удалить этот пост?">
+            <i class="bi bi-trash"></i>
+        </button>
+    </div>
+    {% endif %}
 </div>

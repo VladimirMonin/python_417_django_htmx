@@ -1,7 +1,9 @@
 # core/views.py
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from .forms import PostForm
 from .models import Post
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
 
 
 def main_feed_view(request):
@@ -25,6 +27,7 @@ def htmx_post_list_view(request):
     Возвращает только HTML-фрагмент со списком постов.
     """
     from time import sleep
+
     sleep(2)
     posts = (
         Post.objects.select_related("category")
@@ -50,3 +53,14 @@ def htmx_create_post_view(request):
     else:
         # Если форма невалидна, возвращаем форму с ошибками
         return render(request, "core/_post_form.html", {"form": form})
+
+
+@staff_member_required
+@require_http_methods(["DELETE"])
+def htmx_delete_post_view(request, post_id):
+    """
+    Удаляет пост. Доступно только для персонала сайта.
+    """
+    post = get_object_or_404(Post, id=post_id)
+    post.delete()
+    return HttpResponse(status=204)  # 204 No Content
