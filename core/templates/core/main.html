@@ -23,7 +23,11 @@
         <div id="posts-container">
             {% include 'core/_posts_list.html' %}
         </div>
-        
+
+        <div class="mb-4">
+        <!-- Вставляем форму создания поста -->
+        {% include 'core/_post_form.html' %}
+        </div>
         <!-- Сюда HTMX будет подгружать новые посты -->
         <div id="load-more-trigger"></div>
 

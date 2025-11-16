@@ -1,5 +1,6 @@
 # core/views.py
 from django.shortcuts import render
+from .forms import PostForm
 
 # Полная имитация выгрузки из базы данных.
 # Структура словарей сделана так, чтобы полностью соответствовать
@@ -32,6 +33,7 @@ def main_feed_view(request):
     """
     context = {
         "posts": MOCK_POSTS,
+        "form": PostForm(),
     }
     return render(request, "core/main.html", context)
 
@@ -43,3 +45,22 @@ def post_list_view(request):
     context = {"posts": MOCK_POSTS}
     # Обратите внимание: рендерим не 'main.html', а только 'партиал'
     return render(request, "core/_posts_list.html", context)
+
+
+def create_post_view(request):
+    """
+    Обрабатывает POST-запрос от HTMX для создания нового поста.
+    """
+    from time import sleep
+
+    sleep(5)
+    form = PostForm(request.POST, request.FILES)
+
+    if form.is_valid():
+        post = form.save()
+        # Возвращаем HTML-фрагмент только что созданной карточки
+        return render(request, "core/_card.html", {"post": post})
+
+    else:
+        # Если форма невалидна, возвращаем форму с ошибками
+        return render(request, "core/_create_post_form.html", {"form": form})

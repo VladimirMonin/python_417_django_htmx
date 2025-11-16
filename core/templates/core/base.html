@@ -4,7 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+    <style>
+        /* Стили для индикатора загрузки */
+        #posts-container.htmx-request {
+            opacity: 0.5;
+            transition: opacity 300ms ease-in-out;
+        }
+    </style>
     <!-- Динамический заголовок страницы -->
     <title>{% block title %}TikToeken{% endblock title %}</title>
 
