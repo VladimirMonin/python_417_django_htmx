@@ -5,7 +5,9 @@
         hx-post="{% url 'core:create_post' %}"
         hx-target="#posts-container"
         hx-swap="afterbegin"
-        hx-encoding="multipart/form-data">
+        hx-encoding="multipart/form-data"
+        hx-indicator="#posts-container">
+        
         {% csrf_token %}
         <div class="mb-3">
             {{ form.as_p }}
