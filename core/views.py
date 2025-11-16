@@ -24,6 +24,8 @@ def htmx_post_list_view(request):
     """
     Возвращает только HTML-фрагмент со списком постов.
     """
+    from time import sleep
+    sleep(2)
     posts = (
         Post.objects.select_related("category")
         .prefetch_related("tags")

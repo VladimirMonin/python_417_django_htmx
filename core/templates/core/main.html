@@ -14,7 +14,8 @@
                 class="btn btn-outline-dark"
                 hx-get="{% url 'core:post_list' %}"
                 hx-target="#posts-container"
-                hx-swap="innerHTML">
+                hx-swap="innerHTML"
+                hx-indicator="#posts-container">
                 <i class="bi bi-arrow-clockwise"></i> Загрузить посты заново
             </button>
         </div>
