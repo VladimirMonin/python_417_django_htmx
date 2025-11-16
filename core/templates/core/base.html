@@ -10,6 +10,10 @@
             opacity: 0.5;
             transition: opacity 300ms ease-in-out;
         }
+        #button.htmx-request {
+            {% comment %} Disabled + opacity 0.5 {% endcomment %}
+            display: none;
+        }
     </style>
     <!-- Динамический заголовок страницы -->
     <title>{% block title %}TikToeken{% endblock title %}</title>
