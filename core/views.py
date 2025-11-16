@@ -63,4 +63,4 @@ def htmx_delete_post_view(request, post_id):
     """
     post = get_object_or_404(Post, id=post_id)
     post.delete()
-    return HttpResponse(status=204)  # 204 No Content
+    return HttpResponse("", status=200)
