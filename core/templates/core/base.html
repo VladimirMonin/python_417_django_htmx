@@ -5,10 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        /* Стили для индикатора загрузки */
+        @keyframes pulse-opacity {
+        0%   { opacity: 0.5; }
+        50%  { opacity: 1; }
+        100% { opacity: 0.5; }
+        }
+
         #posts-container.htmx-request {
-            opacity: 0.5;
-            transition: opacity 300ms ease-in-out;
+        animation: pulse-opacity 1s infinite;
+        transition: opacity 300ms ease-in-out;
         }
         #button.htmx-request {
             {% comment %} Disabled + opacity 0.5 {% endcomment %}
