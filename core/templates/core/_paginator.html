@@ -1,0 +1,72 @@
+<!-- core/templates/core/_paginator.html -->
+{% if page_obj.paginator.num_pages > 1 %}
+<style>
+    /* Кастомные стили для нашего черно-желтого пагинатора */
+    .pagination .page-item.active .page-link {
+        background-color: #ffc107; /* Желтый фон для активной страницы */
+        border-color: #ffc107;
+        color: #000; /* Черный текст на желтом фоне */
+    }
+    .pagination .page-link {
+        color: #000; /* Черный текст для всех номеров страниц */
+    }
+    .pagination .page-link:hover {
+        background-color: #e9ecef;
+    }
+</style>
+
+<!-- 
+    Гибридный пагинатор с двумя слоями навигации:
+    1. HTMX кнопка "Показать больше" для динамической подгрузки
+    2. Классический пагинатор для SEO и fallback
+    
+    hx-swap-oob="true" - автоматически заменяет этот элемент при HTMX-запросах
+-->
+<div id="pagination-controls" class="my-4" hx-swap-oob="true">
+    
+    
+    <!-- Слой 1: Кнопка "Показать больше" для HTMX -->
+    {% if page_obj.has_next %}
+    <div id="load-more-container" class="text-center mb-4">
+        <button class="btn btn-warning btn-lg"
+                hx-get="{% url 'core:post_list' %}?page={{ page_obj.next_page_number }}"
+                hx-target="#posts-container"
+                hx-swap="beforeend"
+                hx-select="[id^='post-card-']">
+            Показать больше...
+        </button>
+    </div>
+    {% endif %}
+
+    <!-- Слой 2: Классический пагинатор для SEO и как fallback -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+{% endif %}

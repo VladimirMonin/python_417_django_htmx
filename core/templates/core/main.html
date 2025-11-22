@@ -25,12 +25,13 @@
             {% include 'core/_posts_list.html' %}
         </div>
 
+        <!-- Пагинатор вне контейнера (обновляется через hx-swap-oob) -->
+        {% include 'core/_paginator.html' %}
+
         <div class="mb-4">
         <!-- Вставляем форму создания поста -->
         {% include 'core/_post_form.html' %}
         </div>
-        <!-- Сюда HTMX будет подгружать новые посты -->
-        <div id="load-more-trigger"></div>
 
     </div>
 </div>
