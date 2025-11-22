@@ -132,3 +132,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Срок жизни сессии в секундах (1 неделя)
+SESSION_COOKIE_AGE = 1 * 60 * 60 * 24 * 7
+
+# Продлевать жизнь сессии при каждом запросе от пользователя
+SESSION_SAVE_EVERY_REQUEST = True

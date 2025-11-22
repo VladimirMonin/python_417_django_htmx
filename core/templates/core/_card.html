@@ -14,17 +14,40 @@
     </div>
 
     <div class="card-footer bg-transparent border-top-0 pb-3 d-flex justify-content-around">
-        <button class="btn btn-warning px-4"
+        <!-- Кнопка "Нравится" - десктоп версия (с текстом) -->
+        <button class="btn {% if post.id in request.session.liked_posts %}btn-warning{% else %}btn-outline-warning{% endif %} px-4 d-none d-md-inline-block"
                 hx-post="{% url 'core:like_post' post.id %}"
                 hx-target="#post-card-{{ post.id }}"
                 hx-swap="outerHTML">
-            <i class="bi bi-hand-thumbs-up-fill me-2"></i>Нравится <span class="badge bg-dark">{{ post.likes }}</span>
+            <i class="bi {% if post.id in request.session.liked_posts %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} me-2"></i>
+            Нравится <span class="badge bg-dark">{{ post.likes }}</span>
         </button>
-        <button class="btn btn-dark px-4"
+
+        <!-- Кнопка "Нравится" - мобильная версия (только иконка) -->
+        <button class="btn {% if post.id in request.session.liked_posts %}btn-warning{% else %}btn-outline-warning{% endif %} px-3 d-md-none"
+                hx-post="{% url 'core:like_post' post.id %}"
+                hx-target="#post-card-{{ post.id }}"
+                hx-swap="outerHTML">
+            <i class="bi {% if post.id in request.session.liked_posts %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %}"></i>
+            <span class="badge bg-dark ms-1">{{ post.likes }}</span>
+        </button>
+
+        <!-- Кнопка "Пропустить" - десктоп версия (с текстом) -->
+        <button class="btn {% if post.id in request.session.disliked_posts %}btn-dark{% else %}btn-outline-dark{% endif %} px-4 d-none d-md-inline-block"
                 hx-post="{% url 'core:dislike_post' post.id %}"
                 hx-target="#post-card-{{ post.id }}"
                 hx-swap="outerHTML">
-            <i class="bi bi-hand-thumbs-down me-2"></i>Пропустить <span class="badge bg-warning">{{ post.dislikes }}</span>
+            <i class="bi {% if post.id in request.session.disliked_posts %}bi-hand-thumbs-down-fill{% else %}bi-hand-thumbs-down{% endif %} me-2"></i>
+            Пропустить <span class="badge bg-warning text-dark">{{ post.dislikes }}</span>
+        </button>
+
+        <!-- Кнопка "Пропустить" - мобильная версия (только иконка) -->
+        <button class="btn {% if post.id in request.session.disliked_posts %}btn-dark{% else %}btn-outline-dark{% endif %} px-3 d-md-none"
+                hx-post="{% url 'core:dislike_post' post.id %}"
+                hx-target="#post-card-{{ post.id }}"
+                hx-swap="outerHTML">
+            <i class="bi {% if post.id in request.session.disliked_posts %}bi-hand-thumbs-down-fill{% else %}bi-hand-thumbs-down{% endif %}"></i>
+            <span class="badge bg-warning text-dark ms-1">{{ post.dislikes }}</span>
         </button>
     </div>
     {% comment %} Админ-панель - для персонала сайта {% endcomment %}

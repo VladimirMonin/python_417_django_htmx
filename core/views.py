@@ -21,11 +21,11 @@ def main_feed_view(request):
         .prefetch_related("tags")
         .order_by("-created_at")
     )
-    
+
     # Пагинация для начальной загрузки
     paginator = Paginator(posts, POSTS_PER_PAGE)
     page_obj = paginator.get_page(1)
-    
+
     context = {
         "posts": page_obj,
         "page_obj": page_obj,
@@ -45,12 +45,12 @@ def htmx_post_list_view(request):
         .prefetch_related("tags")
         .order_by("-created_at")
     )
-    
+
     # Пагинация
-    page = request.GET.get('page', 1)
+    page = request.GET.get("page", 1)
     paginator = Paginator(posts, POSTS_PER_PAGE)
     page_obj = paginator.get_page(page)
-    
+
     context = {
         "posts": page_obj,
         "page_obj": page_obj,
@@ -87,26 +87,65 @@ def htmx_delete_post_view(request, post_id):
 @require_http_methods(["POST"])
 def htmx_like_post_view(request, post_id):
     """
-    Увеличивает счетчик лайков поста.
-    Использует F() для атомарного обновления.
+    Обрабатывает лайк поста с учетом сессии.
+    Реализует логику "или/или" и отмену лайка.
     """
     post = get_object_or_404(Post, id=post_id)
-    post.likes = F('likes') + 1
+
+    # Получаем списки из сессии, если их нет - создаем пустые
+    liked_posts = request.session.get("liked_posts", [])
+    disliked_posts = request.session.get("disliked_posts", [])
+
+    # Если пост уже был лайкнут - снимаем лайк (toggle)
+    if post_id in liked_posts:
+        post.likes = F("likes") - 1
+        liked_posts.remove(post_id)
+    else:
+        # Если пост не был лайкнут - ставим лайк
+        post.likes = F("likes") + 1
+        liked_posts.append(post_id)
+        # И если он был дизлайкнут - снимаем дизлайк
+        if post_id in disliked_posts:
+            post.dislikes = F("dislikes") - 1
+            disliked_posts.remove(post_id)
+
     post.save()
     post.refresh_from_db()  # Обновляем объект для корректного отображения
+    request.session["liked_posts"] = liked_posts
+    request.session["disliked_posts"] = disliked_posts
+
     return render(request, "core/_card.html", {"post": post})
 
 
 @require_http_methods(["POST"])
 def htmx_dislike_post_view(request, post_id):
     """
-    Увеличивает счетчик дизлайков поста.
-    Использует F() для атомарного обновления.
+    Обрабатывает дизлайк поста с учетом сессии.
+    Реализует логику "или/или" и отмену дизлайка.
     """
     post = get_object_or_404(Post, id=post_id)
-    post.dislikes = F('dislikes') + 1
+
+    liked_posts = request.session.get("liked_posts", [])
+    disliked_posts = request.session.get("disliked_posts", [])
+
+    # Если пост уже был дизлайкнут - снимаем дизлайк
+    if post_id in disliked_posts:
+        post.dislikes = F("dislikes") - 1
+        disliked_posts.remove(post_id)
+    else:
+        # Если не был - ставим дизлайк
+        post.dislikes = F("dislikes") + 1
+        disliked_posts.append(post_id)
+        # И если он был лайкнут - снимаем лайк
+        if post_id in liked_posts:
+            post.likes = F("likes") - 1
+            liked_posts.remove(post_id)
+
     post.save()
     post.refresh_from_db()  # Обновляем объект для корректного отображения
+    request.session["liked_posts"] = liked_posts
+    request.session["disliked_posts"] = disliked_posts
+
     return render(request, "core/_card.html", {"post": post})
 
 
@@ -119,15 +158,17 @@ def htmx_edit_post_view(request, post_id):
     POST: сохраняет изменения и возвращает обновленную карточку
     """
     post = get_object_or_404(Post, id=post_id)
-    
+
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             post = form.save()
             return render(request, "core/_card.html", {"post": post})
         else:
-            return render(request, "core/_post_edit_form.html", {"form": form, "post": post})
-    
+            return render(
+                request, "core/_post_edit_form.html", {"form": form, "post": post}
+            )
+
     # GET запрос - возвращаем форму редактирования
     form = PostForm(instance=post)
     return render(request, "core/_post_edit_form.html", {"form": form, "post": post})
