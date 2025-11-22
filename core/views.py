@@ -64,3 +64,25 @@ def htmx_delete_post_view(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     post.delete()
     return HttpResponse("", status=200)
+
+
+@require_http_methods(["POST"])
+def htmx_like_post_view(request, post_id):
+    """
+    Увеличивает счетчик лайков поста.
+    """
+    post = get_object_or_404(Post, id=post_id)
+    post.likes += 1
+    post.save()
+    return render(request, "core/_card.html", {"post": post})
+
+
+@require_http_methods(["POST"])
+def htmx_dislike_post_view(request, post_id):
+    """
+    Увеличивает счетчик дизлайков поста.
+    """
+    post = get_object_or_404(Post, id=post_id)
+    post.dislikes += 1
+    post.save()
+    return render(request, "core/_card.html", {"post": post})

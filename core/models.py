@@ -47,6 +47,10 @@ class Post(models.Model):
         Tag, blank=True, related_name="posts", verbose_name="Теги"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Счетчики лайков и дизлайков
+    likes = models.IntegerField(default=0, verbose_name="Лайки")
+    dislikes = models.IntegerField(default=0, verbose_name="Дизлайки")
 
     def __str__(self):
         return self.title
