@@ -1,17 +1,21 @@
 # core/views.py
+from time import sleep
 from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import F
 from .forms import PostForm
 from .models import Post
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_http_methods
+
+# Константа для количества постов на страницу
+POSTS_PER_PAGE = 5
 
 
 def main_feed_view(request):
     """
     Отображает главную страницу с лентой постов.
     """
-    from django.core.paginator import Paginator
-    
     posts = (
         Post.objects.select_related("category")
         .prefetch_related("tags")
@@ -19,7 +23,7 @@ def main_feed_view(request):
     )
     
     # Пагинация для начальной загрузки
-    paginator = Paginator(posts, 5)  # 5 постов на страницу
+    paginator = Paginator(posts, POSTS_PER_PAGE)
     page_obj = paginator.get_page(1)
     
     context = {
@@ -35,9 +39,6 @@ def htmx_post_list_view(request):
     Возвращает только HTML-фрагмент со списком постов.
     Поддерживает пагинацию для бесконечной прокрутки.
     """
-    from time import sleep
-    from django.core.paginator import Paginator
-
     sleep(2)
     posts = (
         Post.objects.select_related("category")
@@ -47,12 +48,12 @@ def htmx_post_list_view(request):
     
     # Пагинация
     page = request.GET.get('page', 1)
-    paginator = Paginator(posts, 5)  # 5 постов на страницу
-    posts_page = paginator.get_page(page)
+    paginator = Paginator(posts, POSTS_PER_PAGE)
+    page_obj = paginator.get_page(page)
     
     context = {
-        "posts": posts_page,
-        "page_obj": posts_page,
+        "posts": page_obj,
+        "page_obj": page_obj,
     }
     return render(request, "core/_posts_list.html", context)
 
@@ -61,8 +62,6 @@ def htmx_create_post_view(request):
     """
     Обрабатывает POST-запрос от HTMX для создания нового поста.
     """
-    from time import sleep
-
     sleep(5)
     form = PostForm(request.POST, request.FILES)
     if form.is_valid():
@@ -89,10 +88,12 @@ def htmx_delete_post_view(request, post_id):
 def htmx_like_post_view(request, post_id):
     """
     Увеличивает счетчик лайков поста.
+    Использует F() для атомарного обновления.
     """
     post = get_object_or_404(Post, id=post_id)
-    post.likes += 1
+    post.likes = F('likes') + 1
     post.save()
+    post.refresh_from_db()  # Обновляем объект для корректного отображения
     return render(request, "core/_card.html", {"post": post})
 
 
@@ -100,10 +101,12 @@ def htmx_like_post_view(request, post_id):
 def htmx_dislike_post_view(request, post_id):
     """
     Увеличивает счетчик дизлайков поста.
+    Использует F() для атомарного обновления.
     """
     post = get_object_or_404(Post, id=post_id)
-    post.dislikes += 1
+    post.dislikes = F('dislikes') + 1
     post.save()
+    post.refresh_from_db()  # Обновляем объект для корректного отображения
     return render(request, "core/_card.html", {"post": post})
 
 
