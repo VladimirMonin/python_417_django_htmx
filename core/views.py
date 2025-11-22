@@ -1,9 +1,15 @@
 # core/views.py
+from time import sleep
 from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import F
 from .forms import PostForm
 from .models import Post
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_http_methods
+
+# Константа для количества постов на страницу
+POSTS_PER_PAGE = 5
 
 
 def main_feed_view(request):
@@ -15,8 +21,14 @@ def main_feed_view(request):
         .prefetch_related("tags")
         .order_by("-created_at")
     )
+    
+    # Пагинация для начальной загрузки
+    paginator = Paginator(posts, POSTS_PER_PAGE)
+    page_obj = paginator.get_page(1)
+    
     context = {
-        "posts": posts,
+        "posts": page_obj,
+        "page_obj": page_obj,
         "form": PostForm(),
     }
     return render(request, "core/main.html", context)
@@ -25,16 +37,24 @@ def main_feed_view(request):
 def htmx_post_list_view(request):
     """
     Возвращает только HTML-фрагмент со списком постов.
+    Поддерживает пагинацию для бесконечной прокрутки.
     """
-    from time import sleep
-
     sleep(2)
     posts = (
         Post.objects.select_related("category")
         .prefetch_related("tags")
         .order_by("-created_at")
     )
-    context = {"posts": posts}
+    
+    # Пагинация
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts, POSTS_PER_PAGE)
+    page_obj = paginator.get_page(page)
+    
+    context = {
+        "posts": page_obj,
+        "page_obj": page_obj,
+    }
     return render(request, "core/_posts_list.html", context)
 
 
@@ -42,8 +62,6 @@ def htmx_create_post_view(request):
     """
     Обрабатывает POST-запрос от HTMX для создания нового поста.
     """
-    from time import sleep
-
     sleep(5)
     form = PostForm(request.POST, request.FILES)
     if form.is_valid():
@@ -64,3 +82,52 @@ def htmx_delete_post_view(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     post.delete()
     return HttpResponse("", status=200)
+
+
+@require_http_methods(["POST"])
+def htmx_like_post_view(request, post_id):
+    """
+    Увеличивает счетчик лайков поста.
+    Использует F() для атомарного обновления.
+    """
+    post = get_object_or_404(Post, id=post_id)
+    post.likes = F('likes') + 1
+    post.save()
+    post.refresh_from_db()  # Обновляем объект для корректного отображения
+    return render(request, "core/_card.html", {"post": post})
+
+
+@require_http_methods(["POST"])
+def htmx_dislike_post_view(request, post_id):
+    """
+    Увеличивает счетчик дизлайков поста.
+    Использует F() для атомарного обновления.
+    """
+    post = get_object_or_404(Post, id=post_id)
+    post.dislikes = F('dislikes') + 1
+    post.save()
+    post.refresh_from_db()  # Обновляем объект для корректного отображения
+    return render(request, "core/_card.html", {"post": post})
+
+
+@staff_member_required
+@require_http_methods(["GET", "POST"])
+def htmx_edit_post_view(request, post_id):
+    """
+    Редактирует пост. Доступно только для персонала сайта.
+    GET: возвращает форму редактирования
+    POST: сохраняет изменения и возвращает обновленную карточку
+    """
+    post = get_object_or_404(Post, id=post_id)
+    
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save()
+            return render(request, "core/_card.html", {"post": post})
+        else:
+            return render(request, "core/_post_edit_form.html", {"form": form, "post": post})
+    
+    # GET запрос - возвращаем форму редактирования
+    form = PostForm(instance=post)
+    return render(request, "core/_post_edit_form.html", {"form": form, "post": post})
