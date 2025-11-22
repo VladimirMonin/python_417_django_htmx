@@ -28,12 +28,21 @@
     <!-- Слой 1: Кнопка "Показать больше" для HTMX -->
     {% if page_obj.has_next %}
     <div id="load-more-container" class="text-center mb-4">
-        <button class="btn btn-warning btn-lg"
+        <!-- Спиннер загрузки -->
+        <div class="htmx-indicator position-fixed bottom-0 start-50 translate-middle-x mb-5" style="z-index: 1050;">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        </div>
+        
+        <button class="btn btn-warning btn-lg px-5"
                 hx-get="{% url 'core:post_list' %}?page={{ page_obj.next_page_number }}"
                 hx-target="#posts-container"
                 hx-swap="beforeend"
-                hx-select="[id^='post-card-']">
-            Показать больше...
+                hx-select=".post-card"
+                hx-indicator=".htmx-indicator">
+            <i class="bi bi-arrow-down-circle me-2"></i>
+            Показать больше
         </button>
     </div>
     {% endif %}

@@ -2,3 +2,6 @@
 {% for post in posts %}
     {% include 'core/_card.html' with post=post %}
 {% endfor %}
+
+<!-- Пагинатор обновится через hx-swap-oob -->
+{% include 'core/_paginator.html' %}

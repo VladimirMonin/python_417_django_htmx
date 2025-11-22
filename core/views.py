@@ -38,8 +38,9 @@ def main_feed_view(request):
 
 def htmx_post_list_view(request):
     """
-    Возвращает только HTML-фрагмент со списком постов.
-    Поддерживает пагинацию для бесконечной прокрутки.
+    Возвращает HTML-фрагмент со списком постов и обновленным пагинатором.
+    Посты добавляются в конец через hx-swap="beforeend".
+    Пагинатор обновляется через hx-swap-oob="true".
     """
     sleep(2)
     posts = (
@@ -57,7 +58,7 @@ def htmx_post_list_view(request):
         "posts": page_obj,
         "page_obj": page_obj,
     }
-    return render(request, "core/_htmx_posts_with_paginator.html", context)
+    return render(request, "core/_posts_list.html", context)
 
 
 def htmx_create_post_view(request):
