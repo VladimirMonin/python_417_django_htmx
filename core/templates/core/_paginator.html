@@ -15,7 +15,7 @@
     }
 </style>
 
-<div id="pagination-controls" class="my-4">
+<div id="pagination-controls" class="my-4" hx-swap-oob="true">
     
     <!-- Слой 1: Кнопка "Показать больше" для HTMX -->
     {% if page_obj.has_next %}
@@ -24,11 +24,7 @@
                 hx-get="{% url 'core:post_list' %}?page={{ page_obj.next_page_number }}"
                 hx-target="#posts-container"
                 hx-swap="beforeend"
-                hx-select="#posts-container > *" 
-                
-                hx-target-2="#pagination-controls"
-                hx-swap-2="outerHTML"
-                hx-select-2="#pagination-controls">
+                hx-select="#posts-container > *">
             Показать больше...
         </button>
     </div>
