@@ -1,0 +1,25 @@
+<!-- core/templates/core/_post_edit_form.html -->
+<div id="post-card-{{ post.id }}" class="card mb-4 shadow-sm bg-white border-0">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Редактировать пост</h5>
+        <form hx-post="{% url 'core:edit_post' post.id %}"
+              hx-target="#post-card-{{ post.id }}"
+              hx-swap="outerHTML"
+              hx-encoding="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">Сохранить</button>
+                <button type="button" 
+                        class="btn btn-secondary"
+                        hx-get="{% url 'core:post_list' %}"
+                        hx-target="#posts-container"
+                        hx-swap="innerHTML">
+                    Отмена
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

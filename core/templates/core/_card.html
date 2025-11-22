@@ -30,6 +30,12 @@
     {% comment %} Админ-панель - для персонала сайта {% endcomment %}
     {% if user.is_staff %}
     <div class="admin-actions">
+        <button class="btn btn-sm btn-outline-primary me-1"
+                hx-get="{% url 'core:edit_post' post.id %}"
+                hx-target="#post-card-{{ post.id }}"
+                hx-swap="outerHTML">
+            <i class="bi bi-pencil"></i>
+        </button>
         <button class="btn btn-sm btn-outline-danger"
                 hx-delete="{% url 'core:delete_post' post.id %}"
                 hx-target="#post-card-{{ post.id }}"

@@ -12,4 +12,5 @@ urlpatterns = [
     path('delete-post/<int:post_id>/', views.htmx_delete_post_view, name='delete_post'),
     path('like-post/<int:post_id>/', views.htmx_like_post_view, name='like_post'),
     path('dislike-post/<int:post_id>/', views.htmx_dislike_post_view, name='dislike_post'),
+    path('edit-post/<int:post_id>/', views.htmx_edit_post_view, name='edit_post'),
 ]
