@@ -15,6 +15,7 @@ POSTS_PER_PAGE = 5
 def main_feed_view(request):
     """
     Отображает главную страницу с лентой постов.
+    Поддерживает пагинацию через GET параметр 'page'.
     """
     posts = (
         Post.objects.select_related("category")
@@ -22,9 +23,10 @@ def main_feed_view(request):
         .order_by("-created_at")
     )
 
-    # Пагинация для начальной загрузки
+    # Пагинация с поддержкой GET параметра
+    page = request.GET.get("page", 1)
     paginator = Paginator(posts, POSTS_PER_PAGE)
-    page_obj = paginator.get_page(1)
+    page_obj = paginator.get_page(page)
 
     context = {
         "posts": page_obj,
