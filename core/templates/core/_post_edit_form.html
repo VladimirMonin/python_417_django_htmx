@@ -12,13 +12,7 @@
             </div>
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success">Сохранить</button>
-                <button type="button" 
-                        class="btn btn-secondary"
-                        hx-get="{% url 'core:post_list' %}"
-                        hx-target="#posts-container"
-                        hx-swap="innerHTML">
-                    Отмена
-                </button>
+                <a href="{% url 'core:main_feed' %}" class="btn btn-secondary">Отмена</a>
             </div>
         </form>
     </div>
