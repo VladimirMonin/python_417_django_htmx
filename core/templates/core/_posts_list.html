@@ -2,6 +2,3 @@
 {% for post in posts %}
     {% include 'core/_card.html' with post=post %}
 {% endfor %}
-
-<!-- Пагинатор для HTMX out-of-band swap -->
-{% include 'core/_paginator.html' %}

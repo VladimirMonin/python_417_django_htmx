@@ -1,0 +1,10 @@
+<!-- core/templates/core/_htmx_posts_with_paginator.html -->
+<!-- Этот шаблон используется только для HTMX запросов -->
+
+<!-- Посты (будут выбраны через hx-select) -->
+{% for post in posts %}
+    {% include 'core/_card.html' with post=post %}
+{% endfor %}
+
+<!-- Пагинатор (обновится через hx-swap-oob) -->
+{% include 'core/_paginator.html' %}

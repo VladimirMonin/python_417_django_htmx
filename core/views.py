@@ -57,7 +57,7 @@ def htmx_post_list_view(request):
         "posts": page_obj,
         "page_obj": page_obj,
     }
-    return render(request, "core/_posts_list.html", context)
+    return render(request, "core/_htmx_posts_with_paginator.html", context)
 
 
 def htmx_create_post_view(request):
