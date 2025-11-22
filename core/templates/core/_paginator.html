@@ -24,7 +24,7 @@
                 hx-get="{% url 'core:post_list' %}?page={{ page_obj.next_page_number }}"
                 hx-target="#posts-container"
                 hx-swap="beforeend"
-                hx-select="#posts-container > *">
+                hx-select="[id^='post-card-']">
             Показать больше...
         </button>
     </div>
