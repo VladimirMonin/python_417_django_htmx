@@ -20,12 +20,14 @@
             </button>
         </div>
 
-        <!-- Контейнер для всех карточек -->
-        <div id="posts-container">
-            {% include 'core/_posts_list.html' %}
+        <!-- Контейнер для постов -->
+        <div id="posts-list">
+            {% for post in posts %}
+                {% include 'core/_card.html' with post=post %}
+            {% endfor %}
         </div>
-
-        <!-- Пагинатор вне контейнера (обновляется через hx-swap-oob) -->
+        
+        <!-- Пагинатор - обновляется через hx-swap-oob -->
         {% include 'core/_paginator.html' %}
 
         <div class="mb-4">

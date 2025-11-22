@@ -37,7 +37,7 @@
         
         <button class="btn btn-warning btn-lg px-5"
                 hx-get="{% url 'core:post_list' %}?page={{ page_obj.next_page_number }}"
-                hx-target="#posts-container"
+                hx-target="#posts-list"
                 hx-swap="beforeend"
                 hx-select=".post-card"
                 hx-indicator=".htmx-indicator">

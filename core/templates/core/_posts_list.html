@@ -1,7 +1,8 @@
 <!-- core/templates/core/_posts_list.html -->
+<!-- Этот шаблон используется только для HTMX ответов -->
 {% for post in posts %}
     {% include 'core/_card.html' with post=post %}
 {% endfor %}
 
-<!-- Пагинатор обновится через hx-swap-oob -->
+<!-- Пагинатор с hx-swap-oob автоматически заменит себя на странице -->
 {% include 'core/_paginator.html' %}
