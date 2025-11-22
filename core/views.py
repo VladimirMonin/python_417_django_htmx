@@ -10,13 +10,21 @@ def main_feed_view(request):
     """
     Отображает главную страницу с лентой постов.
     """
+    from django.core.paginator import Paginator
+    
     posts = (
         Post.objects.select_related("category")
         .prefetch_related("tags")
         .order_by("-created_at")
     )
+    
+    # Пагинация для начальной загрузки
+    paginator = Paginator(posts, 5)  # 5 постов на страницу
+    page_obj = paginator.get_page(1)
+    
     context = {
-        "posts": posts,
+        "posts": page_obj,
+        "page_obj": page_obj,
         "form": PostForm(),
     }
     return render(request, "core/main.html", context)
@@ -25,8 +33,10 @@ def main_feed_view(request):
 def htmx_post_list_view(request):
     """
     Возвращает только HTML-фрагмент со списком постов.
+    Поддерживает пагинацию для бесконечной прокрутки.
     """
     from time import sleep
+    from django.core.paginator import Paginator
 
     sleep(2)
     posts = (
@@ -34,7 +44,16 @@ def htmx_post_list_view(request):
         .prefetch_related("tags")
         .order_by("-created_at")
     )
-    context = {"posts": posts}
+    
+    # Пагинация
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts, 5)  # 5 постов на страницу
+    posts_page = paginator.get_page(page)
+    
+    context = {
+        "posts": posts_page,
+        "page_obj": posts_page,
+    }
     return render(request, "core/_posts_list.html", context)
 
 
