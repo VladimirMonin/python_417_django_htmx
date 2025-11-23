@@ -3,7 +3,7 @@
     <h4 class="mb-3">Создать новый пост</h4>
     <form 
         hx-post="{% url 'core:create_post' %}"
-        hx-target="#posts-container"
+        hx-target="#posts-list"
         hx-swap="afterbegin"
         hx-encoding="multipart/form-data"
         hx-indicator="#posts-container, #button">
