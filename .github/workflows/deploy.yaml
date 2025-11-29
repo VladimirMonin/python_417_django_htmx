@@ -56,4 +56,4 @@ jobs:
             echo "DEBUG_MODE=${{ secrets.DEBUG_MODE }}" >> .env
 
             # Перезапускаем systemd сервис (с sudo и передачей пароля)
-            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl start python_417
+            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl start django_417
