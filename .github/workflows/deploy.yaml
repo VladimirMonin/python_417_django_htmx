@@ -20,7 +20,6 @@ jobs:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
-          # Используем секреты из GitHub для подключения
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
@@ -49,14 +48,12 @@ jobs:
             # Если у вас Poetry
             # /home/v/.local/bin/poetry install --no-root
 
-   # Тут можно добавить команду для создания миграций
+            # Тут можно добавить команду для создания миграций
 
             # Создаем файл .env из отдельных секретов
-            cat > .env << EOF
-TELEGRAM_BOT_KEY=${{ secrets.TELEGRAM_BOT_KEY }}
-SECRET_KEY=${{ secrets.SECRET_KEY }}
-DEBUG_MODE=${{ secrets.DEBUG_MODE }}
-EOF
+            echo "TELEGRAM_BOT_KEY=${{ secrets.TELEGRAM_BOT_KEY }}" > .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+            echo "DEBUG_MODE=${{ secrets.DEBUG_MODE }}" >> .env
 
             # Перезапускаем systemd сервис (с sudo и передачей пароля)
             echo "${{ secrets.PASSWORD }}" | sudo -S systemctl start python_417
