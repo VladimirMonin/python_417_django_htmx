@@ -1,0 +1,62 @@
+# Название нашего workflow для отображения в интерфейсе GitHub
+name: Deploy to VPS
+
+# Указываем когда запускать - при push в main ветку
+on:
+  push:
+    branches: [ main ]
+
+# Определяем задачи для выполнения 
+jobs:
+  deploy:
+    # Указываем на какой ОС запускать
+    runs-on: ubuntu-latest
+
+    steps:
+      # ШАГ №1. Получаем код из репозитория
+      - uses: actions/checkout@v3
+
+      # ШАГ №2. Деплоим на сервер через SSH
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          # Используем секреты из GitHub для подключения
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+
+          # Команды выполняемые на сервере
+          script: |
+            # Переходим в директорию проекта
+            cd /home/v/python_417_django_htmx
+
+            # Останавливаем службу приложения  (с sudo и передачей пароля)
+            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl stop django_417
+
+            # Обновляем код из репозитория (с sudo и передачей пароля)
+            echo "${{ secrets.PASSWORD }}" | git pull
+
+            # Если у вас PIP
+            # Активируем виртуальное окружение
+            # source venv/bin/activate
+
+            # Обновляем зависимости
+            pip install -r requirements.txt
+
+            # Обновляем схему базы данных
+            python3 manage.py migrate
+
+            # Если у вас Poetry
+            # /home/v/.local/bin/poetry install --no-root
+
+   # Тут можно добавить команду для создания миграций
+
+            # Создаем файл .env из отдельных секретов
+            cat > .env << EOF
+TELEGRAM_BOT_KEY=${{ secrets.TELEGRAM_BOT_KEY }}
+SECRET_KEY=${{ secrets.SECRET_KEY }}
+DEBUG_MODE=${{ secrets.DEBUG_MODE }}
+EOF
+
+            # Перезапускаем systemd сервис (с sudo и передачей пароля)
+            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl start python_417
