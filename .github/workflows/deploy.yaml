@@ -37,7 +37,7 @@ jobs:
 
             # Если у вас PIP
             # Активируем виртуальное окружение
-            # source venv/bin/activate
+            source venv/bin/activate
 
             # Обновляем зависимости
             pip install -r requirements.txt
