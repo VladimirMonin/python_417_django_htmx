@@ -25,6 +25,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
 
           # Команды выполняемые на сервере
+          # | - многострочный литерал это означает команды будут выполняться в shell по очереди
           script: |
             # Переходим в директорию проекта
             cd /home/v/python_417_django_htmx
@@ -47,8 +48,6 @@ jobs:
 
             # Если у вас Poetry
             # /home/v/.local/bin/poetry install --no-root
-
-            # Тут можно добавить команду для создания миграций
 
             # Создаем файл .env из отдельных секретов
             echo "TELEGRAM_BOT_KEY=${{ secrets.TELEGRAM_BOT_KEY }}" > .env
