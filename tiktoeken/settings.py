@@ -30,9 +30,22 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-default-secret-key-here")
 DEBUG = os.getenv("DEBUG_MODE", True) == "True"
 
 
-ALLOWED_HOSTS = ["*", "213.171.12.74", "83.217.223.21"]
+ALLOWED_HOSTS = [
+    "*",
+    "213.171.12.74",
+    "83.217.223.21",
+    "www.exception-blog.ru",
+    "exception-blog.ru",
+]
 
-CSRF_TRUSTED_ORIGINS = ["http://83.217.223.21", "https://83.217.223.21"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://83.217.223.21",
+    "https://83.217.223.21",
+    "http://exception-blog.ru",
+    "https://exception-blog.ru",
+    "http://www.exception-blog.ru",
+    "https://www.exception-blog.ru",
+]
 # Application definition
 
 INSTALLED_APPS = [
