@@ -31,7 +31,7 @@ jobs:
             cd /home/v/python_417_django_htmx
 
             # Останавливаем службу приложения  (с sudo и передачей пароля)
-            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl stop django_417
+            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl stop django_417_gunicorn
 
             # Обновляем код из репозитория (с sudo и передачей пароля)
             echo "${{ secrets.PASSWORD }}" | git pull
@@ -46,6 +46,9 @@ jobs:
             # Обновляем схему базы данных
             python3 manage.py migrate
 
+            # Собираем статику
+            python3 manage.py collectstatic --noinput
+
             # Если у вас Poetry
             # /home/v/.local/bin/poetry install --no-root
 
@@ -55,4 +58,4 @@ jobs:
             echo "DEBUG_MODE=${{ secrets.DEBUG_MODE }}" >> .env
 
             # Перезапускаем systemd сервис (с sudo и передачей пароля)
-            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl start django_417
+            echo "${{ secrets.PASSWORD }}" | sudo -S systemctl start django_417_gunicorn
